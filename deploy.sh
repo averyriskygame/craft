@@ -1,0 +1,1 @@
+java -D"java.library.path=java.library.path=C:\Users\Nishtha\Documents\DevSetup\dynamodb_local_lates/DynamoDBLocal_lib" -jar C:\Users\Nishtha\Documents\DevSetup\dynamodb_local_latest\DynamoDBLocal.jar -port 9020 -sharedDb
