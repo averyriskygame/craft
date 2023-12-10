@@ -1,5 +1,6 @@
 package com.idrive.driveronboardingservice.filters;
 
+import com.idrive.driveronboardingservice.exception.CustomException;
 import com.idrive.driveronboardingservice.framework.HttpRequestContext;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
@@ -7,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.connector.RequestFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
@@ -23,16 +25,14 @@ public class AuthenticationFilter implements Filter {
     private HttpRequestContext httpRequestContext;
 
     @Override
-    public void init(FilterConfig filterconfig) throws ServletException {}
+    public void init(FilterConfig filterconfig) throws ServletException {
+    }
 
     @Override
-    public void doFilter(ServletRequest request,
-                         ServletResponse response,
-                         FilterChain filterchain)
-            throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterchain) throws IOException, ServletException {
         String authorizationHeader = ((RequestFacade) request).getHeader("Authorization");
-        if(StringUtils.isEmpty(authorizationHeader)){
-            throw new RuntimeException("UnAuthenticated reason=missing header");
+        if (StringUtils.isEmpty(authorizationHeader)) {
+            throw new CustomException("missing-header", "UnAuthenticated reason=missing header", HttpStatus.UNAUTHORIZED);
         }
 
         try {
@@ -40,22 +40,24 @@ public class AuthenticationFilter implements Filter {
             JWTClaimsSet jwtClaimsSet = signedJWT.getJWTClaimsSet();
             String sub = jwtClaimsSet.getStringClaim("sub");
             String iss = jwtClaimsSet.getStringClaim("iss");
-            if(!"https://auth.idrive.com".equals(iss)
-              || StringUtils.isEmpty(sub)){
-                throw new RuntimeException("UnAuthorization reason=invalid token");
+            if (!"https://auth.idrive.com".equals(iss) || StringUtils.isEmpty(sub)) {
+                throw new CustomException("invalid-token", "UnAuthorization reason=invalid token", HttpStatus.UNAUTHORIZED);
+
+
             }
 
             // Call authService to validate the signature of the token
 
             httpRequestContext.setUserId(sub);
         } catch (ParseException e) {
-            throw new RuntimeException("UnAuthorization reason=tampered token");
+            throw new CustomException("tampered-token", "UnAuthorization reason=tampered token", HttpStatus.UNAUTHORIZED);
         }
 
         filterchain.doFilter(request, response);
     }
 
     @Override
-    public void destroy() {}
+    public void destroy() {
+    }
 
 }

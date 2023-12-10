@@ -3,10 +3,7 @@ package com.idrive.driveronboardingservice.worklow.step.impl;
 import com.idrive.driveronboardingservice.model.Verification;
 import com.idrive.driveronboardingservice.model.type.VerificationStatus;
 import com.idrive.driveronboardingservice.model.type.VerificationWorkFlowState;
-import com.idrive.driveronboardingservice.repository.VerificationRepository;
 import com.idrive.driveronboardingservice.worklow.model.WorkflowContext;
-import com.idrive.driveronboardingservice.worklow.step.WorkflowStep;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +16,7 @@ public class SubmitVerificationStep extends WorkFlowStepImpl {
     public void execute(WorkflowContext workflowContext) {
         if (workflowContext.getVerification() != null) {
             Verification verification = workflowContext.getVerification();
-            if (verification.getVerifcationStatus().equals(VerificationStatus.IN_PROGRESS)
+            if (verification.getVerificationStatus().equals(VerificationStatus.IN_PROGRESS)
                     && verification.getVerificationWorkFlowState().equals(VerificationWorkFlowState.INITIATED)) {
                 verification.setVerificationWorkFlowState(VerificationWorkFlowState.DOCUMENT_COLLECTED);
                 repository.save(verification);

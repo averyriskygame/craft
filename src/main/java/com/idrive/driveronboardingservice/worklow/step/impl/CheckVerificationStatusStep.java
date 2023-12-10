@@ -36,9 +36,9 @@ public class CheckVerificationStatusStep extends WorkFlowStepImpl {
 
                 }
                 if (tpvStatus.equals("SUCCESS")) {
-                    verification.setVerifcationStatus(VerificationStatus.COMPLETE);
+                    verification.setVerificationStatus(VerificationStatus.COMPLETE);
                 } else {
-                    verification.setVerifcationStatus(VerificationStatus.FAILED);
+                    verification.setVerificationStatus(VerificationStatus.FAILED);
                     verificationMessagePublisher.publish(verification, workflowContext.getRequestId());
                 }
                 repository.save(verification);

@@ -7,7 +7,7 @@ import com.idrive.driveronboardingservice.model.type.VerificationWorkFlowState;
 public class VerificationWorklowUtil {
 
     public static boolean isVerificationFailedOrPending(Verification verification) {
-        VerificationStatus verificationStatus = verification.getVerifcationStatus();
+        VerificationStatus verificationStatus = verification.getVerificationStatus();
         VerificationWorkFlowState verificationWorkFlowState = verification.getVerificationWorkFlowState();
 
         if (verificationWorkFlowState.equals(VerificationWorkFlowState.DOCUMENT_COLLECTED)) {
@@ -23,7 +23,7 @@ public class VerificationWorklowUtil {
     }
 
     public static boolean isVerificationInProgress(Verification verification) {
-        VerificationStatus verificationStatus = verification.getVerifcationStatus();
+        VerificationStatus verificationStatus = verification.getVerificationStatus();
         VerificationWorkFlowState verificationWorkFlowState = verification.getVerificationWorkFlowState();
 
         if (verificationStatus.equals(VerificationStatus.IN_PROGRESS)

@@ -1,18 +1,18 @@
 package com.idrive.driveronboardingservice.controller;
 
+import com.idrive.driveronboardingservice.dto.VerificationDTO;
 import com.idrive.driveronboardingservice.framework.HttpRequestContext;
 import com.idrive.driveronboardingservice.model.Verification;
-import com.idrive.driveronboardingservice.model.VerificationMessage;
 import com.idrive.driveronboardingservice.queue.VerificationMessageProducer;
 import com.idrive.driveronboardingservice.service.VerificationService;
 import com.idrive.driveronboardingservice.worklow.WorkflowExecutor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.message.Message;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/v1/user")
@@ -26,35 +26,30 @@ public class VerificationController {
     private VerificationService verificationService;
 
     @Autowired
-    VerificationMessageProducer producer;
+    private VerificationMessageProducer producer;
     @Autowired
-    WorkflowExecutor workflowExecutor;
+    private WorkflowExecutor workflowExecutor;
 
     @GetMapping("/{id}/verification")
-    public ResponseEntity getVerification(@PathVariable("id") String userId) throws Exception {
+    public ResponseEntity<VerificationDTO> getVerification(@PathVariable("id") String userId) throws Exception {
         log.info("api=GetVerification requestId={} userId={}", httpRequestContext.getRequestId(), httpRequestContext.getUserId());
-        Verification verification = verificationService.getVerification(userId);
+        VerificationDTO verification = verificationService.getVerificationByUserId(userId);
         return ResponseEntity.ok(verification);
 
     }
 
     @PostMapping("/{id}/verification")
-    public ResponseEntity requestVerification(@RequestBody Verification verification) throws Exception {
-        log.info("api=CreateVerification requestId={} userId={}", httpRequestContext.getRequestId(), httpRequestContext.getUserId());
-        Verification verificationResponse = verificationService.saveVerfication(verification);
+    public ResponseEntity requestVerification(@Valid @RequestBody VerificationDTO verification) throws Exception {
+        log.info("api=RequestVerification requestId={} userId={}", httpRequestContext.getRequestId(), httpRequestContext.getUserId());
+        Verification verificationResponse = verificationService.saveVerification(verification);
         return new ResponseEntity<Verification>(verificationResponse, HttpStatus.CREATED);
 
     }
 
     @PostMapping("/{id}/verification/submit")
-    public ResponseEntity submit (@RequestBody Verification verification) throws Exception {
-        log.info("api=CreateVerification requestId={} userId={}", httpRequestContext.getRequestId(), httpRequestContext.getUserId());
-        //workflowExecutor.execute();
-
-        VerificationMessage message= new VerificationMessage();
-        message.setVerificationId(verification.getVerificationId());
-        message.setRequestId(httpRequestContext.getRequestId());
-        producer.sendJsonMessage(message);
-        return  ResponseEntity.accepted().build();
+    public ResponseEntity submitVerification(@RequestBody VerificationDTO verification) throws Exception {
+        log.info("api=SubmitVerification requestId={} userId={}", httpRequestContext.getRequestId(), httpRequestContext.getUserId());
+        workflowExecutor.execute(verification, httpRequestContext.getRequestId());
+        return ResponseEntity.accepted().build();
     }
 }

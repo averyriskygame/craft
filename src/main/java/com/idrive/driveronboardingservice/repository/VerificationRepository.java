@@ -7,7 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 import java.util.Optional;
 
 @EnableScan
-public interface VdataRepo extends CrudRepository<Verification, String> {
+public interface VerificationRepository extends CrudRepository<Verification, String> {
 
     Optional<Verification> findById(String id);
 

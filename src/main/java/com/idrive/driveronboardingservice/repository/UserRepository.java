@@ -6,7 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.Optional;
 @EnableScan
-public interface UDRepo extends CrudRepository<User, String> {
+public interface UserRepository extends CrudRepository<User, String> {
 
     Optional<User> findById(String id);
 }

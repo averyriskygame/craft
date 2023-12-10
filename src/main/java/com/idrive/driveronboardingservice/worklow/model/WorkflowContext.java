@@ -11,9 +11,7 @@ import org.springframework.stereotype.Component;
 @Setter
 public class WorkflowContext {
 
-    @Autowired
     Verification verification;
-
     String requestId;
 
 }
