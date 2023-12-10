@@ -5,14 +5,14 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConvertedEnum;
 import com.idrive.driveronboardingservice.model.type.UserStatus;
 import com.idrive.driveronboardingservice.model.type.UserType;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.stereotype.Component;
 
 @DynamoDBTable(tableName = "User")
-@Getter
-@Setter
-
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
     @Id
